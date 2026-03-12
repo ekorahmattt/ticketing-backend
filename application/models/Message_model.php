@@ -43,9 +43,13 @@ class Message_model extends CI_Model
 
     public function getMessagesByTicket($ticket_id)
     {
-        $this->db->where('ticket_id', $ticket_id);
-        $this->db->order_by('created_at', 'ASC');
-        return $this->db->get($this->table)->result();
+        $this->db->select('messages.id, messages.sender_type, CASE WHEN messages.sender_type = "admin" THEN users.name WHEN messages.sender_type = "device" THEN tickets.reporter_name END AS sender_name, messages.message, messages.created_at', FALSE);
+        $this->db->from($this->table);
+        $this->db->join('users', 'users.id = messages.sender_id', 'left');
+        $this->db->join('tickets', 'tickets.id = messages.ticket_id', 'left');
+        $this->db->where('messages.ticket_id', $ticket_id);
+        $this->db->order_by('messages.created_at', 'ASC');
+        return $this->db->get()->result();
     }
 
     public function sendMessage($data)

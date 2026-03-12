@@ -44,20 +44,21 @@ class Ticket_model extends CI_Model
 
     public function getAllTickets()
     {
-        // Example of joining with related tables for a complete view
-        $this->db->select('tickets.*, devices.device_name, users.name as admin_name');
+        $this->db->select('tickets.id, tickets.reporter_name, tickets.reporter_unit, categories.name as category, subcategories.name as subcategory, tickets.title, tickets.status, tickets.created_at');
         $this->db->from($this->table);
-        $this->db->join('devices', 'devices.id = tickets.device_id', 'left');
-        $this->db->join('users', 'users.id = tickets.handled_by', 'left');
+        $this->db->join('categories', 'categories.id = tickets.category_id', 'left');
+        $this->db->join('subcategories', 'subcategories.id = tickets.subcategory_id', 'left');
         $this->db->order_by('tickets.created_at', 'DESC');
         return $this->db->get()->result();
     }
 
     public function getTicketDetail($id)
     {
-        $this->db->select('tickets.*, devices.device_name, devices.ip_address, users.name as admin_name');
+        $this->db->select('tickets.*, devices.device_name, devices.ip_address, categories.name as category, subcategories.name as subcategory, users.name as admin_name');
         $this->db->from($this->table);
         $this->db->join('devices', 'devices.id = tickets.device_id', 'left');
+        $this->db->join('categories', 'categories.id = tickets.category_id', 'left');
+        $this->db->join('subcategories', 'subcategories.id = tickets.subcategory_id', 'left');
         $this->db->join('users', 'users.id = tickets.handled_by', 'left');
         $this->db->where('tickets.id', $id);
         return $this->db->get()->row();

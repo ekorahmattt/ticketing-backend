@@ -1,58 +1,35 @@
-Saya sedang mengembangkan backend REST API menggunakan CodeIgniter 3.1.10 untuk sistem ticketing dan monitoring perangkat.
+Saya sedang mengembangkan backend REST API menggunakan CodeIgniter 3.1.10 untuk sistem IT Service Desk dan monitoring perangkat.
 
 Database MySQL sudah terhubung melalui application/config/database.php.
 
-Saya memiliki beberapa tabel yang saling berhubungan.
+Saya memiliki tabel berikut:
 
-Table: devices
+tickets
+users
+messages
 
-- id
-- device_name
-- device_type_id
-- brand
-- model
-- serial_number
-- ip_address
-- mac_address
-- remote_address
-- os
-- unit
-- coord_x
-- coord_y
-- last_seen
-- created_at
-- updated_at
+Struktur tabel messages:
 
-Table: device_users
+- id (INT AUTO_INCREMENT PRIMARY KEY)
+- ticket_id (INT)
+- sender_type (ENUM: admin, device)
+- sender_id (INT)
+- message (TEXT)
+- created_at (DATETIME)
 
-- id
-- name
-- unit
+Relasi:
+messages.ticket_id → tickets.id
+messages.sender_id → users.id (jika sender_type = admin)
 
-Table: device_user_assignments
+Saya ingin membuat API untuk sistem percakapan pada ticket (ticket chat).
 
-- device_id
-- user_id
-
-Table: device_connections
-
-- id
-- parent_device_id
-- child_device_id
-- connection_type
-
-Saya ingin membuat API untuk mengelola perangkat sekaligus relasinya.
-
-Gunakan struktur berikut:
+Gunakan struktur CodeIgniter:
 
 Controller:
-application/controllers/api/Devices.php
+application/controllers/api/Messages.php
 
-Models:
-application/models/Device_model.php
-application/models/DeviceUser_model.php
-application/models/DeviceUserAssignment_model.php
-application/models/DeviceConnection_model.php
+Model:
+application/models/Message_model.php
 
 Gunakan Query Builder CodeIgniter.
 
@@ -60,138 +37,74 @@ Gunakan Query Builder CodeIgniter.
 
 API Endpoint yang harus dibuat
 
-1. GET /api/devices
+1️⃣ GET /api/tickets/{ticket_id}/messages
 
-Mengambil semua perangkat beserta:
+Mengambil semua pesan pada ticket tertentu.
 
-- daftar user yang menggunakan perangkat
-- daftar perangkat yang terhubung
+Data yang dikembalikan:
+
+- message_id
+- sender_type
+- sender_name
+- message
+- created_at
+
+Jika sender_type = admin,
+ambil nama dari tabel users.
+
+Jika sender_type = device,
+gunakan reporter_name dari tabel tickets.
 
 Response contoh:
 
 {
   "status": "success",
-  "message": "devices retrieved",
+  "message": "messages retrieved",
   "data": [
     {
-      "id": 7,
-      "device_name": "IGD-Dokter",
-      "brand": "Acer",
-      "model": "Aspire C227-1751",
-      "unit": "IGD",
-      "users": [
-        {
-          "id": 2,
-          "name": "Dr. Budi"
-        }
-      ],
-      "connections": [
-        {
-          "device_id": 11,
-          "device_name": "Printer IGD"
-        }
-      ]
+      "id": 1,
+      "sender_type": "device",
+      "sender_name": "Budi Santoso",
+      "message": "Komputer sering mati sendiri",
+      "created_at": "2026-03-11 09:30:00"
+    },
+    {
+      "id": 2,
+      "sender_type": "admin",
+      "sender_name": "Admin IT",
+      "message": "Baik, kami akan cek segera.",
+      "created_at": "2026-03-11 09:32:10"
     }
   ]
 }
 
 ---
 
-2. GET /api/devices/{id}
+2️⃣ POST /api/tickets/{ticket_id}/messages
 
-Mengambil detail perangkat beserta:
+Digunakan untuk mengirim pesan pada ticket.
 
-- device_users
-- device_connections
-
----
-
-3. POST /api/devices
-
-Menambahkan perangkat baru beserta relasi.
-
-Body request contoh:
+Body JSON contoh:
 
 {
-  "device_name": "IGD-Dokter",
-  "device_type_id": 1,
-  "brand": "Acer",
-  "model": "Aspire C227-1751",
-  "serial_number": "SN123456",
-  "ip_address": "192.168.1.20",
-  "mac_address": "00:1B:44:11:3A:B7",
-  "os": "Windows 10",
-  "unit": "IGD",
-  "coord_x": 340,
-  "coord_y": 210,
-  "users": [2,3],
-  "connections": [
-    {
-      "child_device_id": 11,
-      "connection_type": "usb"
-    }
-  ]
+  "sender_type": "admin",
+  "sender_id": 2,
+  "message": "Kami sedang mengecek komputer tersebut."
 }
 
-Proses:
+Jika sender_type = device,
+sender_id bisa NULL.
 
-1. insert ke table devices
-2. insert user assignments ke device_user_assignments
-3. insert relasi ke device_connections
+Simpan pesan ke tabel messages.
 
-created_at harus diisi otomatis.
+created_at harus otomatis menggunakan waktu sekarang.
 
----
+Response:
 
-4. PUT /api/devices/{id}
-
-Update data device serta relasi:
-
-- update devices
-- update device_user_assignments
-- update device_connections
-
-updated_at harus diisi dengan datetime saat update.
-
----
-
-5. DELETE /api/devices/{id}
-
-Menghapus perangkat dan relasi terkait:
-
-- device_user_assignments
-- device_connections
-
----
-
-Model yang harus dibuat
-
-Device_model
-
-fungsi:
-
-getAll()
-getById($id)
-create($data)
-update($id,$data)
-delete($id)
-
-DeviceUser_model
-
-getAll()
-getById($id)
-
-DeviceUserAssignment_model
-
-getUsersByDevice($device_id)
-assignUser($device_id,$user_id)
-deleteByDevice($device_id)
-
-DeviceConnection_model
-
-getConnections($device_id)
-createConnection($data)
-deleteByDevice($device_id)
+{
+  "status": "success",
+  "message": "message sent"
+}
 
 ---
 
@@ -199,19 +112,19 @@ Tambahkan routing di:
 
 application/config/routes.php
 
-$route['api/devices'] = 'api/devices/index';
-$route['api/devices/(:num)'] = 'api/devices/show/$1';
+$route['api/tickets/(:num)/messages'] = 'api/messages/index/$1';
+$route['api/tickets/(:num)/messages/send'] = 'api/messages/send/$1';
 
 ---
 
-Gunakan response JSON standar:
+Gunakan format response JSON standar:
 
 Success
 
 {
   "status": "success",
   "message": "text",
-  "data": {}
+  "data": []
 }
 
 Error

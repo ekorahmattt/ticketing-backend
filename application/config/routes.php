@@ -21,6 +21,14 @@ $route['api/admin-users/(:num)'] = 'api/adminusers/show/$1';
 $route['api/devices'] = 'api/devices/index';
 $route['api/devices/(:num)'] = 'api/devices/show/$1';
 
+// Tickets Routes
+$route['api/tickets'] = 'api/tickets/index';
+$route['api/tickets/detect-device'] = 'api/tickets/detectDevice';
+$route['api/tickets/(:num)'] = 'api/tickets/show/$1';
+$route['api/tickets/(:num)/status'] = 'api/tickets/updateStatus/$1';
+$route['api/tickets/(:num)/messages'] = 'api/messages/index/$1';
+$route['api/tickets/(:num)/messages/send'] = 'api/messages/send/$1';
+
 // Format standard akses API (directory api, nama controller)
 // Sehingga /api/devices akan menuju -> application/controllers/api/Devices.php
 $route['api/([a-zA-Z_-]+)'] = 'api/$1';
