@@ -12,7 +12,7 @@ class BaseApiController extends CI_Controller
         // Dibutuhkan karena API akan diakses oleh frontend React (domain/port berbeda)
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-User-Role, X-User-Id');
 
         // Handle request OPTIONS (Preflight dari browser)
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

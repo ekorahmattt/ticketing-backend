@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 19, 2026 at 02:59 AM
+-- Generation Time: Mar 19, 2026 at 02:52 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 7.4.33
 
@@ -66,16 +66,10 @@ CREATE TABLE `devices` (
   `coord_y` int(11) DEFAULT NULL,
   `last_seen` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT NULL
+  `updated_at` datetime DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `devices`
---
-
-INSERT INTO `devices` (`id`, `device_name`, `brand`, `model`, `serial_number`, `device_type_id`, `ip_address`, `mac_address`, `remote_address`, `os`, `unit`, `coord_x`, `coord_y`, `last_seen`, `created_at`, `updated_at`) VALUES
-(1, 'IGD-PC-01', 'Acer', 'Aspire C227-1751', 'ACER-IGD-001', 1, '192.168.1.20', '00:1B:44:11:3A:B7', '192.168.1.20:3389', 'Windows 10 Pro', 'IGD', 340, 210, NULL, '2026-03-11 04:20:36', NULL),
-(2, 'Printer-IGD-01', 'Epson', 'L3210', 'EPSON-IGD-PR01', 2, '192.168.1.30', 'A4:5E:60:11:22:33', NULL, NULL, 'IGD', 380, 215, NULL, '2026-03-11 04:21:11', NULL);
 
 -- --------------------------------------------------------
 
@@ -151,14 +145,6 @@ CREATE TABLE `messages` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `messages`
---
-
-INSERT INTO `messages` (`id`, `ticket_id`, `sender_type`, `sender_id`, `message`, `created_at`) VALUES
-(1, 8, 'admin', 1, 'Baik pak, akan segera kami cek komputernya.', '2026-03-11 08:46:43'),
-(2, 8, 'device', NULL, 'Terima kasih pak, ditunggu kedatangannya.', '2026-03-11 08:52:45');
-
 -- --------------------------------------------------------
 
 --
@@ -177,28 +163,28 @@ CREATE TABLE `subcategories` (
 --
 
 INSERT INTO `subcategories` (`id`, `category_id`, `name`, `sla_minutes`) VALUES
-(1, 1, 'Komputer tidak menyala', NULL),
-(2, 1, 'Komputer sangat lambat', NULL),
-(3, 1, 'Blue screen / error sistem', NULL),
-(4, 1, 'Keyboard atau mouse tidak berfungsi', NULL),
-(5, 2, 'Tidak bisa terhubung ke jaringan', NULL),
-(6, 2, 'Internet sangat lambat', NULL),
-(7, 2, 'Wifi sering terputus', NULL),
-(8, 2, 'Tidak bisa akses server', NULL),
-(9, 3, 'SIMRS tidak bisa login', NULL),
-(10, 3, 'SIMRS error saat input data', NULL),
-(11, 3, 'SIMRS tidak bisa mencetak', NULL),
-(12, 3, 'SIMRS sangat lambat', NULL),
-(13, 4, 'Monitor tidak menyala', NULL),
-(14, 4, 'Tampilan layar tidak normal', NULL),
-(15, 4, 'Resolusi layar bermasalah', NULL),
-(16, 5, 'Printer tidak bisa mencetak', NULL),
-(17, 5, 'Printer offline', NULL),
-(18, 5, 'Hasil cetakan tidak jelas', NULL),
-(19, 5, 'Kertas sering macet', NULL),
-(20, 6, 'Scanner tidak terdeteksi', NULL),
-(21, 6, 'Scanner tidak bisa scan', NULL),
-(22, 6, 'Hasil scan tidak muncul', NULL);
+(1, 1, 'Komputer tidak menyala', 60),
+(2, 1, 'Komputer sangat lambat', 60),
+(3, 1, 'Blue screen / error sistem', 60),
+(4, 1, 'Keyboard atau mouse tidak berfungsi', 60),
+(5, 2, 'Tidak bisa terhubung ke jaringan', 30),
+(6, 2, 'Internet sangat lambat', 30),
+(7, 2, 'Wifi sering terputus', 30),
+(8, 2, 'Tidak bisa akses server', 30),
+(9, 3, 'SIMRS tidak bisa login', 15),
+(10, 3, 'SIMRS error saat input data', 15),
+(11, 3, 'SIMRS tidak bisa mencetak', 15),
+(12, 3, 'SIMRS sangat lambat', 15),
+(13, 4, 'Monitor tidak menyala', 60),
+(14, 4, 'Tampilan layar tidak normal', 60),
+(15, 4, 'Resolusi layar bermasalah', 60),
+(16, 5, 'Printer tidak bisa mencetak', 45),
+(17, 5, 'Printer offline', 45),
+(18, 5, 'Hasil cetakan tidak jelas', 45),
+(19, 5, 'Kertas sering macet', 45),
+(20, 6, 'Scanner tidak terdeteksi', 60),
+(21, 6, 'Scanner tidak bisa scan', 60),
+(22, 6, 'Hasil scan tidak muncul', 60);
 
 -- --------------------------------------------------------
 
@@ -232,13 +218,6 @@ CREATE TABLE `tickets` (
   `category_id` int(11) DEFAULT NULL,
   `subcategory_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tickets`
---
-
-INSERT INTO `tickets` (`id`, `device_id`, `reporter_name`, `reporter_unit`, `reporter_contact`, `report_hostname`, `report_ip`, `report_device_brand`, `report_device_model`, `report_user_agent`, `title`, `description`, `action_taken`, `handling_notes`, `status`, `priority`, `sla_response_minutes`, `first_response_at`, `handled_by`, `created_at`, `updated_at`, `resolved_at`, `category_id`, `subcategory_id`) VALUES
-(8, 1, 'Budi Santoso', 'Poli Umum', '081234567890', 'SIMRS-EKO', '::1', 'Lenovo', 'ThinkCentre M720q', 'PostmanRuntime/7.51.1', '[UPDATE] Komputer Poli Umum mati sendiri', 'Admin update: Komputer Poli Umum-PC01 tipe Lenovo sering mati sendiri saat digunakan. Teknisi agar membawa sparepart PSU cadangan karena kemungkinan kerusakan daya.', NULL, NULL, '', 'medium', NULL, '2026-03-11 07:34:09', 1, '2026-03-11 04:31:40', '2026-03-11 07:36:51', NULL, 2, 3);
 
 -- --------------------------------------------------------
 
@@ -276,9 +255,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `username`, `password`, `role`, `last_login`, `created_at`, `updated_at`) VALUES
-(1, 'Eko Rahmat', 'eko', '$2y$10$HSbXHem83TUxaPkn.8Ip6.LdhapOVPBSRL5a8ZBRsPRxdKcj.OEq6', 'superadmin', NULL, '2026-03-10 05:22:50', NULL),
-(2, 'Rosmiati', 'rosmiati', '$2y$10$C5TmUmKey9i0v7cbHVGHhu1c1NeSM/AF5ZEioiQrOt9P1JnPuh6BO', 'admin', '2026-03-11 03:54:31', '2026-03-10 05:24:35', NULL),
-(3, 'Ronal', 'ronal', '$2y$10$m9TWOuKQAFK4EYU3bH./gun3xrfSqY8Uq7OaKZ69h7BplZ0giP3Wi', 'admin', NULL, '2026-03-10 07:29:01', NULL);
+(1, 'Eko Rahmat', 'eko', '$2y$10$HSbXHem83TUxaPkn.8Ip6.LdhapOVPBSRL5a8ZBRsPRxdKcj.OEq6', 'superadmin', NULL, '2026-03-10 05:22:50', NULL);
 
 --
 -- Indexes for dumped tables
@@ -297,7 +274,9 @@ ALTER TABLE `devices`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_device_ip` (`ip_address`),
   ADD KEY `idx_device_mac` (`mac_address`),
-  ADD KEY `fk_device_type` (`device_type_id`);
+  ADD KEY `fk_device_type` (`device_type_id`),
+  ADD KEY `fk_devices_created_by` (`created_by`),
+  ADD KEY `fk_devices_updated_by` (`updated_by`);
 
 --
 -- Indexes for table `device_connections`
@@ -438,7 +417,9 @@ ALTER TABLE `users`
 --
 ALTER TABLE `devices`
   ADD CONSTRAINT `devices_ibfk_1` FOREIGN KEY (`device_type_id`) REFERENCES `device_types` (`id`),
-  ADD CONSTRAINT `fk_device_type` FOREIGN KEY (`device_type_id`) REFERENCES `device_types` (`id`);
+  ADD CONSTRAINT `fk_device_type` FOREIGN KEY (`device_type_id`) REFERENCES `device_types` (`id`),
+  ADD CONSTRAINT `fk_devices_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_devices_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `device_connections`

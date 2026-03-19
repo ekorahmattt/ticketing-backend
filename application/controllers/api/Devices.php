@@ -46,10 +46,16 @@ class Devices extends BaseApiController
             $users = isset($data['users']) ? $data['users'] : [];
             $connections = isset($data['connections']) ? $data['connections'] : [];
 
-            unset($data['users']);
-            unset($data['connections']);
+            // Hapus field yang tidak boleh diisi oleh client secara manual
+            unset($data['users'], $data['connections'], $data['created_by'], $data['updated_by']);
 
             $data['created_at'] = date('Y-m-d H:i:s');
+
+            // Set created_by dari header X-User-Id (diisi frontend setelah login)
+            $userId = $this->input->get_request_header('X-User-Id', TRUE);
+            if ($userId && is_numeric($userId)) {
+                $data['created_by'] = (int)$userId;
+            }
 
             // Insert Device
             $insertId = $this->Device_model->create($data);
@@ -108,12 +114,19 @@ class Devices extends BaseApiController
             $users = isset($data['users']) ? $data['users'] : null;
             $connections = isset($data['connections']) ? $data['connections'] : null;
 
-            unset($data['users']);
-            unset($data['connections']);
+            // Hapus field yang tidak boleh diisi oleh client secara manual
+            unset($data['users'], $data['connections'], $data['created_by'], $data['updated_by']);
 
             // Update Tabel Devices jika ada data device utama
             if (!empty($data)) {
                 $data['updated_at'] = date('Y-m-d H:i:s');
+
+                // Set updated_by dari header X-User-Id
+                $userId = $this->input->get_request_header('X-User-Id', TRUE);
+                if ($userId && is_numeric($userId)) {
+                    $data['updated_by'] = (int)$userId;
+                }
+
                 $this->Device_model->update($id, $data);
             }
 

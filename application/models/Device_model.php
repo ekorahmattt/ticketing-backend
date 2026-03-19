@@ -11,15 +11,29 @@ class Device_model extends CI_Model
         parent::__construct();
     }
 
+    /**
+     * Ambil semua device, sertakan nama created_by dan updated_by dari tabel users
+     */
     public function getAll()
     {
-        // Can optionally join device_types if needed, using simple get for now
-        return $this->db->get($this->table)->result();
+        $this->db->select('d.*, cb.name AS created_by_name, ub.name AS updated_by_name');
+        $this->db->from($this->table . ' d');
+        $this->db->join('users cb', 'cb.id = d.created_by', 'left');
+        $this->db->join('users ub', 'ub.id = d.updated_by', 'left');
+        return $this->db->get()->result();
     }
 
+    /**
+     * Ambil satu device berdasarkan ID, sertakan nama created_by dan updated_by
+     */
     public function getById($id)
     {
-        return $this->db->where('id', $id)->get($this->table)->row();
+        $this->db->select('d.*, cb.name AS created_by_name, ub.name AS updated_by_name');
+        $this->db->from($this->table . ' d');
+        $this->db->join('users cb', 'cb.id = d.created_by', 'left');
+        $this->db->join('users ub', 'ub.id = d.updated_by', 'left');
+        $this->db->where('d.id', $id);
+        return $this->db->get()->row();
     }
 
     public function create($data)
@@ -40,7 +54,7 @@ class Device_model extends CI_Model
         return $this->db->delete($this->table);
     }
 
-    // Specific methods for Device_model
+    // ── Specific helpers ──────────────────────────────────────────────────────
 
     public function getByIp($ip)
     {
