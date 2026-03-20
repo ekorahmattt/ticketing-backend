@@ -1,57 +1,158 @@
--- phpMyAdmin SQL Dump
--- version 5.2.0
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Mar 19, 2026 at 02:52 PM
--- Server version: 10.4.27-MariaDB
--- PHP Version: 7.4.33
+/*
+SQLyog Community v13.1.1 (64 bit)
+MySQL - 10.4.27-MariaDB : Database - ticketing-db
+*********************************************************************
+*/
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+/*!40101 SET NAMES utf8 */;
 
+/*!40101 SET SQL_MODE=''*/;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`ticketing-db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
 
---
--- Database: `ticketing-db`
---
+USE `ticketing-db`;
 
--- --------------------------------------------------------
+/*Table structure for table `categories` */
 
---
--- Table structure for table `categories`
---
+DROP TABLE IF EXISTS `categories`;
 
 CREATE TABLE `categories` (
-  `id` int(11) NOT NULL,
-  `name` varchar(100) DEFAULT NULL
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `categories` */
+
+insert  into `categories`(`id`,`name`) values 
+(1,'Komputer'),
+(2,'Jaringan'),
+(3,'SIMRS'),
+(4,'Display'),
+(5,'Printer'),
+(6,'Scanner');
+
+/*Table structure for table `device_connections` */
+
+DROP TABLE IF EXISTS `device_connections`;
+
+CREATE TABLE `device_connections` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `parent_device_id` int(11) NOT NULL,
+  `child_device_id` int(11) NOT NULL,
+  `connection_type` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `parent_device_id` (`parent_device_id`),
+  KEY `child_device_id` (`child_device_id`),
+  CONSTRAINT `device_connections_ibfk_1` FOREIGN KEY (`parent_device_id`) REFERENCES `devices` (`id`),
+  CONSTRAINT `device_connections_ibfk_2` FOREIGN KEY (`child_device_id`) REFERENCES `devices` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `device_connections` */
+
+insert  into `device_connections`(`id`,`parent_device_id`,`child_device_id`,`connection_type`) values 
+(2,5,6,'USB'),
+(3,7,8,'USB'),
+(4,9,10,'USB'),
+(5,11,12,'USB');
+
+/*Table structure for table `device_types` */
+
+DROP TABLE IF EXISTS `device_types`;
+
+CREATE TABLE `device_types` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `device_types` */
+
+insert  into `device_types`(`id`,`name`) values 
+(1,'Computer'),
+(2,'Printer'),
+(3,'Access Point'),
+(4,'CCTV');
+
+/*Table structure for table `device_user_assignments` */
+
+DROP TABLE IF EXISTS `device_user_assignments`;
+
+CREATE TABLE `device_user_assignments` (
+  `device_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`device_id`,`user_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `device_user_assignments_ibfk_1` FOREIGN KEY (`device_id`) REFERENCES `devices` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `device_user_assignments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `device_users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `categories`
---
+/*Data for the table `device_user_assignments` */
 
-INSERT INTO `categories` (`id`, `name`) VALUES
-(1, 'Komputer'),
-(2, 'Jaringan'),
-(3, 'SIMRS'),
-(4, 'Display'),
-(5, 'Printer'),
-(6, 'Scanner');
+insert  into `device_user_assignments`(`device_id`,`user_id`) values 
+(3,1),
+(3,2),
+(3,3),
+(5,4),
+(5,5),
+(5,6),
+(7,7),
+(7,8),
+(7,9),
+(9,10),
+(9,11),
+(9,12),
+(11,13),
+(11,14),
+(11,15),
+(13,2),
+(13,3);
 
--- --------------------------------------------------------
+/*Table structure for table `device_users` */
 
---
--- Table structure for table `devices`
---
+DROP TABLE IF EXISTS `device_users`;
+
+CREATE TABLE `device_users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `full_name` varchar(150) DEFAULT NULL,
+  `unit_id` int(11) DEFAULT NULL,
+  `phone` varchar(50) DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `fk_device_users_unit` (`unit_id`),
+  CONSTRAINT `fk_device_users_unit` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `device_users` */
+
+insert  into `device_users`(`id`,`name`,`full_name`,`unit_id`,`phone`,`created_at`) values 
+(1,'andi','Andi Saputra',1,'081200000001','2026-03-20 22:35:42'),
+(2,'budi','Budi Santoso',1,'081200000002','2026-03-20 22:35:42'),
+(3,'citra','Citra Lestari',1,'081200000003','2026-03-20 22:35:42'),
+(4,'dedi','Dedi Kurniawan',2,'081200000004','2026-03-20 22:35:42'),
+(5,'eka','Eka Putri',2,'081200000005','2026-03-20 22:35:42'),
+(6,'fajar','Fajar Nugroho',2,'081200000006','2026-03-20 22:35:42'),
+(7,'gina','Gina Maharani',3,'081200000007','2026-03-20 22:35:42'),
+(8,'hadi','Hadi Prasetyo',3,'081200000008','2026-03-20 22:35:42'),
+(9,'indah','Indah Permata',3,'081200000009','2026-03-20 22:35:42'),
+(10,'joko','Joko Susilo',4,'081200000010','2026-03-20 22:35:42'),
+(11,'kiki','Kiki Amelia',4,'081200000011','2026-03-20 22:35:42'),
+(12,'lukas','Lukas Wijaya',4,'081200000012','2026-03-20 22:35:42'),
+(13,'maya','Maya Sari',5,'081200000013','2026-03-20 22:35:42'),
+(14,'nina','Nina Oktaviani',5,'081200000014','2026-03-20 22:35:42'),
+(15,'oscar','Oscar Gunawan',5,'081200000015','2026-03-20 22:35:42');
+
+/*Table structure for table `devices` */
+
+DROP TABLE IF EXISTS `devices`;
 
 CREATE TABLE `devices` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `device_name` varchar(100) NOT NULL,
   `brand` varchar(100) DEFAULT NULL,
   `model` varchar(100) DEFAULT NULL,
@@ -61,139 +162,124 @@ CREATE TABLE `devices` (
   `mac_address` varchar(100) DEFAULT NULL,
   `remote_address` varchar(50) DEFAULT NULL,
   `os` varchar(100) DEFAULT NULL,
-  `unit` varchar(100) DEFAULT NULL,
+  `unit_id` int(11) DEFAULT NULL,
   `coord_x` int(11) DEFAULT NULL,
   `coord_y` int(11) DEFAULT NULL,
   `last_seen` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_device_ip` (`ip_address`),
+  KEY `idx_device_mac` (`mac_address`),
+  KEY `fk_device_type` (`device_type_id`),
+  KEY `fk_devices_created_by` (`created_by`),
+  KEY `fk_devices_updated_by` (`updated_by`),
+  KEY `fk_devices_unit` (`unit_id`),
+  CONSTRAINT `devices_ibfk_1` FOREIGN KEY (`device_type_id`) REFERENCES `device_types` (`id`),
+  CONSTRAINT `fk_device_type` FOREIGN KEY (`device_type_id`) REFERENCES `device_types` (`id`),
+  CONSTRAINT `fk_devices_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_devices_unit` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`),
+  CONSTRAINT `fk_devices_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
+/*Data for the table `devices` */
 
---
--- Table structure for table `device_connections`
---
+insert  into `devices`(`id`,`device_name`,`brand`,`model`,`serial_number`,`device_type_id`,`ip_address`,`mac_address`,`remote_address`,`os`,`unit_id`,`coord_x`,`coord_y`,`last_seen`,`created_at`,`created_by`,`updated_by`,`updated_at`) values 
+(3,'PC-RJ-01','Dell','OptiPlex 3080','SN-RJ-PC01',1,'192.168.10.11','AA:BB:CC:DD:01','-','Windows 10',NULL,100,100,NULL,'2026-03-20 22:35:51',NULL,1,'2026-03-20 16:40:18'),
+(4,'PR-RJ-01','HP','LaserJet 1020','SN-RJ-PR01',2,'192.168.10.21','AA:BB:CC:DD:02',NULL,NULL,1,120,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
+(5,'PC-RI-01','Lenovo','ThinkCentre M720','SN-RI-PC01',1,'192.168.20.11','AA:BB:CC:DD:03',NULL,'Windows 10',2,200,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
+(6,'PR-RI-01','Canon','LBP 2900','SN-RI-PR01',2,'192.168.20.21','AA:BB:CC:DD:04',NULL,NULL,2,220,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
+(7,'PC-IGD-01','HP','ProDesk 400','SN-IGD-PC01',1,'192.168.30.11','AA:BB:CC:DD:05',NULL,'Windows 11',3,300,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
+(8,'PR-IGD-01','Epson','L3110','SN-IGD-PR01',2,'192.168.30.21','AA:BB:CC:DD:06',NULL,NULL,3,320,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
+(9,'PC-RAD-01','Dell','Vostro 3681','SN-RAD-PC01',1,'192.168.40.11','AA:BB:CC:DD:07',NULL,'Windows 10',4,400,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
+(10,'PR-RAD-01','Brother','HL-L2321D','SN-RAD-PR01',2,'192.168.40.21','AA:BB:CC:DD:08',NULL,NULL,4,420,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
+(11,'PC-LAB-01','Acer','Veriton X','SN-LAB-PC01',1,'192.168.50.11','AA:BB:CC:DD:09',NULL,'Windows 10',5,500,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
+(12,'PR-LAB-01','HP','DeskJet 2336','SN-LAB-PR01',2,'192.168.50.21','AA:BB:CC:DD:10',NULL,NULL,5,520,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
+(13,'TEST-PC-01','Lenovo','Thinkpad','',1,'192.168.20.13','','-','',NULL,NULL,NULL,NULL,'2026-03-20 16:41:18',1,1,'2026-03-20 16:43:03');
 
-CREATE TABLE `device_connections` (
-  `id` int(11) NOT NULL,
-  `parent_device_id` int(11) NOT NULL,
-  `child_device_id` int(11) NOT NULL,
-  `connection_type` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*Table structure for table `messages` */
 
--- --------------------------------------------------------
-
---
--- Table structure for table `device_types`
---
-
-CREATE TABLE `device_types` (
-  `id` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `device_types`
---
-
-INSERT INTO `device_types` (`id`, `name`) VALUES
-(1, 'Computer'),
-(2, 'Printer'),
-(3, 'Access Point'),
-(4, 'CCTV');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `device_users`
---
-
-CREATE TABLE `device_users` (
-  `id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `unit` varchar(100) NOT NULL,
-  `phone` varchar(50) DEFAULT NULL,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `device_user_assignments`
---
-
-CREATE TABLE `device_user_assignments` (
-  `device_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `messages`
---
+DROP TABLE IF EXISTS `messages`;
 
 CREATE TABLE `messages` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `ticket_id` int(11) NOT NULL,
   `sender_type` enum('admin','device') NOT NULL,
   `sender_id` int(11) DEFAULT NULL,
   `message` text NOT NULL,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `created_at` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_messages_ticket` (`ticket_id`),
+  CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
+/*Data for the table `messages` */
 
---
--- Table structure for table `subcategories`
---
+/*Table structure for table `subcategories` */
+
+DROP TABLE IF EXISTS `subcategories`;
 
 CREATE TABLE `subcategories` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `category_id` int(11) DEFAULT NULL,
   `name` varchar(150) DEFAULT NULL,
-  `sla_minutes` int(11) DEFAULT NULL
+  `sla_minutes` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `category_id` (`category_id`),
+  CONSTRAINT `subcategories_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `subcategories` */
+
+insert  into `subcategories`(`id`,`category_id`,`name`,`sla_minutes`) values 
+(1,1,'Komputer tidak menyala',60),
+(2,1,'Komputer sangat lambat',60),
+(3,1,'Blue screen / error sistem',60),
+(4,1,'Keyboard atau mouse tidak berfungsi',60),
+(5,2,'Tidak bisa terhubung ke jaringan',30),
+(6,2,'Internet sangat lambat',30),
+(7,2,'Wifi sering terputus',30),
+(8,2,'Tidak bisa akses server',30),
+(9,3,'SIMRS tidak bisa login',15),
+(10,3,'SIMRS error saat input data',15),
+(11,3,'SIMRS tidak bisa mencetak',15),
+(12,3,'SIMRS sangat lambat',15),
+(13,4,'Monitor tidak menyala',60),
+(14,4,'Tampilan layar tidak normal',60),
+(15,4,'Resolusi layar bermasalah',60),
+(16,5,'Printer tidak bisa mencetak',45),
+(17,5,'Printer offline',45),
+(18,5,'Hasil cetakan tidak jelas',45),
+(19,5,'Kertas sering macet',45),
+(20,6,'Scanner tidak terdeteksi',60),
+(21,6,'Scanner tidak bisa scan',60),
+(22,6,'Hasil scan tidak muncul',60);
+
+/*Table structure for table `ticket_attachments` */
+
+DROP TABLE IF EXISTS `ticket_attachments`;
+
+CREATE TABLE `ticket_attachments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ticket_id` int(11) NOT NULL,
+  `file_name` varchar(255) DEFAULT NULL,
+  `file_path` varchar(255) DEFAULT NULL,
+  `uploaded_at` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `ticket_id` (`ticket_id`),
+  CONSTRAINT `ticket_attachments_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `subcategories`
---
+/*Data for the table `ticket_attachments` */
 
-INSERT INTO `subcategories` (`id`, `category_id`, `name`, `sla_minutes`) VALUES
-(1, 1, 'Komputer tidak menyala', 60),
-(2, 1, 'Komputer sangat lambat', 60),
-(3, 1, 'Blue screen / error sistem', 60),
-(4, 1, 'Keyboard atau mouse tidak berfungsi', 60),
-(5, 2, 'Tidak bisa terhubung ke jaringan', 30),
-(6, 2, 'Internet sangat lambat', 30),
-(7, 2, 'Wifi sering terputus', 30),
-(8, 2, 'Tidak bisa akses server', 30),
-(9, 3, 'SIMRS tidak bisa login', 15),
-(10, 3, 'SIMRS error saat input data', 15),
-(11, 3, 'SIMRS tidak bisa mencetak', 15),
-(12, 3, 'SIMRS sangat lambat', 15),
-(13, 4, 'Monitor tidak menyala', 60),
-(14, 4, 'Tampilan layar tidak normal', 60),
-(15, 4, 'Resolusi layar bermasalah', 60),
-(16, 5, 'Printer tidak bisa mencetak', 45),
-(17, 5, 'Printer offline', 45),
-(18, 5, 'Hasil cetakan tidak jelas', 45),
-(19, 5, 'Kertas sering macet', 45),
-(20, 6, 'Scanner tidak terdeteksi', 60),
-(21, 6, 'Scanner tidak bisa scan', 60),
-(22, 6, 'Hasil scan tidak muncul', 60);
+/*Table structure for table `tickets` */
 
--- --------------------------------------------------------
-
---
--- Table structure for table `tickets`
---
+DROP TABLE IF EXISTS `tickets`;
 
 CREATE TABLE `tickets` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `device_id` int(11) NOT NULL,
   `reporter_name` varchar(100) DEFAULT NULL,
   `reporter_unit` varchar(100) DEFAULT NULL,
@@ -216,253 +302,66 @@ CREATE TABLE `tickets` (
   `updated_at` datetime DEFAULT NULL,
   `resolved_at` datetime DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL,
-  `subcategory_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `subcategory_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `handled_by` (`handled_by`),
+  KEY `idx_ticket_status` (`status`),
+  KEY `idx_ticket_device` (`device_id`),
+  KEY `fk_ticket_category` (`category_id`),
+  KEY `fk_ticket_subcategory` (`subcategory_id`),
+  CONSTRAINT `fk_ticket_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
+  CONSTRAINT `fk_ticket_subcategory` FOREIGN KEY (`subcategory_id`) REFERENCES `subcategories` (`id`),
+  CONSTRAINT `tickets_ibfk_1` FOREIGN KEY (`device_id`) REFERENCES `devices` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `tickets_ibfk_2` FOREIGN KEY (`handled_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
+/*Data for the table `tickets` */
 
---
--- Table structure for table `ticket_attachments`
---
+/*Table structure for table `units` */
 
-CREATE TABLE `ticket_attachments` (
-  `id` int(11) NOT NULL,
-  `ticket_id` int(11) NOT NULL,
-  `file_name` varchar(255) DEFAULT NULL,
-  `file_path` varchar(255) DEFAULT NULL,
-  `uploaded_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `units`;
 
--- --------------------------------------------------------
+CREATE TABLE `units` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `code` varchar(20) DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Table structure for table `users`
---
+/*Data for the table `units` */
+
+insert  into `units`(`id`,`name`,`code`,`created_at`) values 
+(1,'Rawat Jalan','RJ','2026-03-20 23:51:16'),
+(2,'Rawat Inap','RI','2026-03-20 23:51:16'),
+(3,'IGD','IGD','2026-03-20 23:51:16'),
+(4,'Radiologi','RAD','2026-03-20 23:51:16'),
+(5,'Laboratorium','LAB','2026-03-20 23:51:16');
+
+/*Table structure for table `users` */
+
+DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('admin','superadmin') DEFAULT 'admin',
   `last_login` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `users`
---
+/*Data for the table `users` */
 
-INSERT INTO `users` (`id`, `name`, `username`, `password`, `role`, `last_login`, `created_at`, `updated_at`) VALUES
-(1, 'Eko Rahmat', 'eko', '$2y$10$HSbXHem83TUxaPkn.8Ip6.LdhapOVPBSRL5a8ZBRsPRxdKcj.OEq6', 'superadmin', NULL, '2026-03-10 05:22:50', NULL);
+insert  into `users`(`id`,`name`,`username`,`password`,`role`,`last_login`,`created_at`,`updated_at`) values 
+(1,'Eko Rahmat','Eko','$2y$10$F6aqWguvk8xKQ5u7a29QLetDjxleYbl8sBMJVOv.Ro6TsF8e/TjRa','superadmin','2026-03-20 15:43:02','2026-03-10 05:22:50','2026-03-19 15:29:47'),
+(4,'Adrian Ronaldy','Ronal','$2y$10$jGIC6eduWvV6mqtDYJfBne6gpFEz3klu0czpR6jkrqg8FF55AIANG','admin','2026-03-19 15:28:39','2026-03-19 15:27:38',NULL);
 
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `categories`
---
-ALTER TABLE `categories`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `devices`
---
-ALTER TABLE `devices`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_device_ip` (`ip_address`),
-  ADD KEY `idx_device_mac` (`mac_address`),
-  ADD KEY `fk_device_type` (`device_type_id`),
-  ADD KEY `fk_devices_created_by` (`created_by`),
-  ADD KEY `fk_devices_updated_by` (`updated_by`);
-
---
--- Indexes for table `device_connections`
---
-ALTER TABLE `device_connections`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `parent_device_id` (`parent_device_id`),
-  ADD KEY `child_device_id` (`child_device_id`);
-
---
--- Indexes for table `device_types`
---
-ALTER TABLE `device_types`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `device_users`
---
-ALTER TABLE `device_users`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `device_user_assignments`
---
-ALTER TABLE `device_user_assignments`
-  ADD PRIMARY KEY (`device_id`,`user_id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table `messages`
---
-ALTER TABLE `messages`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_messages_ticket` (`ticket_id`);
-
---
--- Indexes for table `subcategories`
---
-ALTER TABLE `subcategories`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `category_id` (`category_id`);
-
---
--- Indexes for table `tickets`
---
-ALTER TABLE `tickets`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `handled_by` (`handled_by`),
-  ADD KEY `idx_ticket_status` (`status`),
-  ADD KEY `idx_ticket_device` (`device_id`),
-  ADD KEY `fk_ticket_category` (`category_id`),
-  ADD KEY `fk_ticket_subcategory` (`subcategory_id`);
-
---
--- Indexes for table `ticket_attachments`
---
-ALTER TABLE `ticket_attachments`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `ticket_id` (`ticket_id`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `categories`
---
-ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT for table `devices`
---
-ALTER TABLE `devices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `device_connections`
---
-ALTER TABLE `device_connections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `device_types`
---
-ALTER TABLE `device_types`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT for table `device_users`
---
-ALTER TABLE `device_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `messages`
---
-ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `subcategories`
---
-ALTER TABLE `subcategories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
-
---
--- AUTO_INCREMENT for table `tickets`
---
-ALTER TABLE `tickets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
--- AUTO_INCREMENT for table `ticket_attachments`
---
-ALTER TABLE `ticket_attachments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `devices`
---
-ALTER TABLE `devices`
-  ADD CONSTRAINT `devices_ibfk_1` FOREIGN KEY (`device_type_id`) REFERENCES `device_types` (`id`),
-  ADD CONSTRAINT `fk_device_type` FOREIGN KEY (`device_type_id`) REFERENCES `device_types` (`id`),
-  ADD CONSTRAINT `fk_devices_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `fk_devices_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `device_connections`
---
-ALTER TABLE `device_connections`
-  ADD CONSTRAINT `device_connections_ibfk_1` FOREIGN KEY (`parent_device_id`) REFERENCES `devices` (`id`),
-  ADD CONSTRAINT `device_connections_ibfk_2` FOREIGN KEY (`child_device_id`) REFERENCES `devices` (`id`);
-
---
--- Constraints for table `device_user_assignments`
---
-ALTER TABLE `device_user_assignments`
-  ADD CONSTRAINT `device_user_assignments_ibfk_1` FOREIGN KEY (`device_id`) REFERENCES `devices` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `device_user_assignments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `device_users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `messages`
---
-ALTER TABLE `messages`
-  ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `subcategories`
---
-ALTER TABLE `subcategories`
-  ADD CONSTRAINT `subcategories_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`);
-
---
--- Constraints for table `tickets`
---
-ALTER TABLE `tickets`
-  ADD CONSTRAINT `fk_ticket_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
-  ADD CONSTRAINT `fk_ticket_subcategory` FOREIGN KEY (`subcategory_id`) REFERENCES `subcategories` (`id`),
-  ADD CONSTRAINT `tickets_ibfk_1` FOREIGN KEY (`device_id`) REFERENCES `devices` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `tickets_ibfk_2` FOREIGN KEY (`handled_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `ticket_attachments`
---
-ALTER TABLE `ticket_attachments`
-  ADD CONSTRAINT `ticket_attachments_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;

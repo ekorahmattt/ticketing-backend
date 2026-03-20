@@ -11,14 +11,25 @@ class DeviceUser_model extends CI_Model
         parent::__construct();
     }
 
+    /**
+     * Ambil semua device_users, JOIN ke units untuk dapat nama unit
+     */
     public function getAll()
     {
-        return $this->db->get($this->table)->result();
+        $this->db->select('du.*, u.name AS unit_name, u.code AS unit_code');
+        $this->db->from($this->table . ' du');
+        $this->db->join('units u', 'u.id = du.unit_id', 'left');
+        $this->db->order_by('du.name', 'ASC');
+        return $this->db->get()->result();
     }
 
     public function getById($id)
     {
-        return $this->db->where('id', $id)->get($this->table)->row();
+        $this->db->select('du.*, u.name AS unit_name, u.code AS unit_code');
+        $this->db->from($this->table . ' du');
+        $this->db->join('units u', 'u.id = du.unit_id', 'left');
+        $this->db->where('du.id', $id);
+        return $this->db->get()->row();
     }
 
     public function create($data)
