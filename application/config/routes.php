@@ -21,14 +21,22 @@ $route['api/admin-users/(:num)'] = 'api/adminusers/show/$1';
 $route['api/devices'] = 'api/devices/index';
 $route['api/devices/(:num)'] = 'api/devices/show/$1';
 
-// Device Users Routes (Dropdown)
+// Device Users Routes (CRUD)
 $route['api/device-users'] = 'api/deviceusers/index';
+$route['api/device-users/(:num)'] = 'api/deviceusers/show/$1';
 
 // Device Types Routes (Dropdown)
 $route['api/device-types'] = 'api/devicetypes/index';
 
 // Units Routes (Dropdown)
 $route['api/units'] = 'api/units/index';
+
+// Categories Routes (Dropdown)
+$route['api/categories'] = 'api/categories/index';
+
+// Subcategories Routes (CRUD)
+$route['api/subcategories'] = 'api/subcategories/index';
+$route['api/subcategories/(:num)'] = 'api/subcategories/show/$1';
 
 // Tickets Routes
 $route['api/tickets'] = 'api/tickets/index';
