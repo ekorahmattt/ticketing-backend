@@ -280,7 +280,7 @@ DROP TABLE IF EXISTS `tickets`;
 
 CREATE TABLE `tickets` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `device_id` int(11) NOT NULL,
+  `device_id` int(11) DEFAULT NULL,
   `reporter_name` varchar(100) DEFAULT NULL,
   `reporter_unit` varchar(100) DEFAULT NULL,
   `reporter_contact` varchar(100) DEFAULT NULL,
