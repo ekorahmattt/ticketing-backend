@@ -148,9 +148,24 @@ class Tickets extends BaseApiController
         elseif ($method === 'PUT') {
             return $this->updateTicketDetails($id);
         }
+        elseif ($method === 'DELETE') {
+            return $this->deleteTicket($id);
+        }
         else {
             return $this->errorResponse('Method Not Allowed', 405);
         }
+    }
+
+    private function deleteTicket($id)
+    {
+        $ticket = $this->Ticket_model->getTicketDetail($id);
+        if (!$ticket) {
+            return $this->errorResponse('Ticket not found', 404);
+        }
+
+        $this->Ticket_model->delete($id);
+
+        return $this->successResponse(null, 'Ticket berhasil dihapus');
     }
 
     private function updateTicketDetails($id)
