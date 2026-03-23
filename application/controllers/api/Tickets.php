@@ -93,6 +93,8 @@ class Tickets extends BaseApiController
             }
         }
 
+        $this->triggerWebSocket('ticket_created', ['ticket_id' => $ticket_id, 'status' => 'open']);
+
         return $this->successResponse(['ticket_id' => $ticket_id], 'ticket created');
     }
 
@@ -165,6 +167,8 @@ class Tickets extends BaseApiController
 
         $this->Ticket_model->delete($id);
 
+        $this->triggerWebSocket('ticket_deleted', ['ticket_id' => $id]);
+
         return $this->successResponse(null, 'Ticket berhasil dihapus');
     }
 
@@ -208,6 +212,8 @@ class Tickets extends BaseApiController
 
         $updateData['updated_at'] = date('Y-m-d H:i:s');
         $this->Ticket_model->update($id, $updateData);
+
+        $this->triggerWebSocket('ticket_updated', ['ticket_id' => $id]);
 
         return $this->successResponse(null, 'Data ticket berhasil diupdate');
     }
@@ -265,6 +271,33 @@ class Tickets extends BaseApiController
 
         $this->Ticket_model->update($id, $update_data);
 
+        $this->triggerWebSocket('status_updated', ['ticket_id' => $id, 'new_status' => $db_status]);
+
         return $this->successResponse(null, 'Status ticket berhasil diupdate');
+    }
+
+    private function triggerWebSocket($eventName, $data = null)
+    {
+        $url = 'http://localhost:3001/api/webhook/ticket';
+        
+        $payload = json_encode([
+            'event' => $eventName,
+            'data' => $data
+        ]);
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($payload)
+        ]);
+        
+        curl_setopt($ch, CURLOPT_TIMEOUT, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
+        
+        curl_exec($ch);
+        curl_close($ch);
     }
 }
