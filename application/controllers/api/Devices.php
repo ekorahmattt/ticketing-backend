@@ -241,7 +241,7 @@ class Devices extends BaseApiController
         $allowed = [
             'device_name', 'brand', 'model', 'serial_number',
             'ip_address', 'mac_address', 'remote_address',
-            'os', 'coord_x', 'coord_y',
+            'os', 'coord_x', 'coord_y', 'status', 'keterangan'
         ];
 
         $fields = [];

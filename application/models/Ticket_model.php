@@ -53,6 +53,18 @@ class Ticket_model extends CI_Model
         return $this->db->get()->result();
     }
 
+    public function getTicketsByDeviceId($device_id)
+    {
+        $this->db->select('tickets.id, tickets.reporter_name, tickets.reporter_unit, categories.name as category, subcategories.name as subcategory, tickets.title, tickets.status, tickets.created_at, users.name as teknisi');
+        $this->db->from($this->table);
+        $this->db->join('categories', 'categories.id = tickets.category_id', 'left');
+        $this->db->join('subcategories', 'subcategories.id = tickets.subcategory_id', 'left');
+        $this->db->join('users', 'users.id = tickets.handled_by', 'left');
+        $this->db->where('tickets.device_id', $device_id);
+        $this->db->order_by('tickets.created_at', 'DESC');
+        return $this->db->get()->result();
+    }
+
     public function getTicketDetail($id)
     {
         $this->db->select('tickets.*, devices.device_name, devices.ip_address, categories.name as category, subcategories.name as subcategory, users.name as admin_name');

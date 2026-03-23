@@ -19,7 +19,12 @@ class Tickets extends BaseApiController
         $method = $this->input->server('REQUEST_METHOD');
 
         if ($method === 'GET') {
-            $tickets = $this->Ticket_model->getAllTickets();
+            $device_id = $this->input->get('device_id');
+            if ($device_id) {
+                $tickets = $this->Ticket_model->getTicketsByDeviceId($device_id);
+            } else {
+                $tickets = $this->Ticket_model->getAllTickets();
+            }
             return $this->successResponse($tickets, 'Daftar ticket berhasil dimuat');
         }
         elseif ($method === 'POST') {
@@ -57,8 +62,8 @@ class Tickets extends BaseApiController
             'subcategory_id' => isset($postData['subcategory_id']) ? $postData['subcategory_id'] : null,
             'title' => isset($postData['title']) ? $postData['title'] : null,
             'description' => isset($postData['description']) ? $postData['description'] : null,
-            'status' => 'baru', // Default status
-            'created_at' => date('Y-m-d H:i:s')
+            'status' => 'open', // Default status
+            'created_at' => isset($postData['created_at']) ? $postData['created_at'] : date('Y-m-d H:i:s')
         ];
         $ticket_id = $this->Ticket_model->create($data);
 
@@ -206,11 +211,28 @@ class Tickets extends BaseApiController
         }
 
         $status = $putData['status'];
-        $valid_statuses = ['baru', 'proses', 'selesai'];
+        
+        $status_map = [
+            'baru' => 'open',
+            'open' => 'open',
+            'proses' => 'process',
+            'diproses' => 'process',
+            'process' => 'process',
+            'selesai' => 'done',
+            'done' => 'done',
+            'on hold' => 'on_hold',
+            'on_hold' => 'on_hold',
+            'canceled' => 'cancelled',
+            'cancelled' => 'cancelled',
+            'batal' => 'cancelled',
+            'pending' => 'pending'
+        ];
 
-        if (!in_array($status, $valid_statuses)) {
+        if (!array_key_exists($status, $status_map)) {
             return $this->errorResponse('Invalid status value', 400);
         }
+
+        $db_status = $status_map[$status];
 
         $ticket = $this->Ticket_model->getTicketDetail($id);
         if (!$ticket) {
@@ -218,11 +240,11 @@ class Tickets extends BaseApiController
         }
 
         $update_data = [
-            'status' => $status,
+            'status' => $db_status,
             'updated_at' => date('Y-m-d H:i:s')
         ];
 
-        if ($status === 'proses' && empty($ticket->first_response_at)) {
+        if (($db_status === 'process') && empty($ticket->first_response_at)) {
             $update_data['first_response_at'] = date('Y-m-d H:i:s');
         }
 
