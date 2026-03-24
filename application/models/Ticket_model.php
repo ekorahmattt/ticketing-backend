@@ -67,7 +67,7 @@ class Ticket_model extends CI_Model
 
     public function getTicketDetail($id)
     {
-        $this->db->select('tickets.*, devices.device_name, devices.ip_address, categories.name as category, subcategories.name as subcategory, users.name as admin_name');
+        $this->db->select('tickets.*, devices.device_name, devices.ip_address, devices.remote_address, categories.name as category, subcategories.name as subcategory, users.name as admin_name');
         $this->db->from($this->table);
         $this->db->join('devices', 'devices.id = tickets.device_id', 'left');
         $this->db->join('categories', 'categories.id = tickets.category_id', 'left');
