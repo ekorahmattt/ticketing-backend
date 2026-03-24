@@ -22,6 +22,10 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);
   });
+
+  socket.on('newMessage', (payload) => {
+    io.emit('newMessage', payload);
+  });
 });
 
 app.post('/api/webhook/ticket', (req, res) => {

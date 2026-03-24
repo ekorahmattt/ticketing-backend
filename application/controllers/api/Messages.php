@@ -1,7 +1,9 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Messages extends CI_Controller
+require_once APPPATH . 'controllers/api/BaseApiController.php';
+
+class Messages extends BaseApiController
 {
     public function __construct()
     {

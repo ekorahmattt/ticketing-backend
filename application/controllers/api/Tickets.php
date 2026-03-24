@@ -85,9 +85,7 @@ class Tickets extends BaseApiController
                 $attachment_data = [
                     'ticket_id' => $ticket_id,
                     'file_name' => $upload_data['file_name'],
-                    'file_path' => '/uploads/tickets/' . $upload_data['file_name'],
-                    'file_type' => $upload_data['file_type'],
-                    'created_at' => date('Y-m-d H:i:s')
+                    'file_path' => '/uploads/tickets/' . $upload_data['file_name']
                 ];
                 $this->TicketAttachment_model->insert($attachment_data);
             }
@@ -95,7 +93,12 @@ class Tickets extends BaseApiController
 
         $this->triggerWebSocket('ticket_created', ['ticket_id' => $ticket_id, 'status' => 'open']);
 
-        return $this->successResponse(['ticket_id' => $ticket_id], 'ticket created');
+        $response_data = ['ticket_id' => $ticket_id];
+        if (isset($attachment_data['file_path'])) {
+            $response_data['attachment_path'] = $attachment_data['file_path'];
+        }
+
+        return $this->successResponse($response_data, 'ticket created');
     }
 
     public function detectDevice()
@@ -109,13 +112,20 @@ class Tickets extends BaseApiController
 
         $response = ['status' => 'success'];
         if ($device) {
+            $this->load->model('DeviceUserAssignment_model');
+            $deviceDetail = $this->Device_model->getById($device->id);
+            $users = $this->DeviceUserAssignment_model->getUsersByDevice($device->id);
+
             $response['device_detected'] = true;
             $response['data'] = [
-                'device_id' => $device->id,
-                'device_name' => isset($device->device_name) ? $device->device_name : null,
-                'hostname' => isset($device->hostname) ? $device->hostname : null,
-                'unit' => isset($device->unit) ? $device->unit : null,
-                'ip_address' => $device->ip_address
+                'device_id' => $deviceDetail->id,
+                'device_name' => isset($deviceDetail->device_name) ? $deviceDetail->device_name : null,
+                'hostname' => isset($deviceDetail->hostname) ? $deviceDetail->hostname : null,
+                'unit' => isset($deviceDetail->unit_name) ? $deviceDetail->unit_name : null,
+                'ip_address' => $deviceDetail->ip_address,
+                'device_brand' => isset($deviceDetail->brand) ? $deviceDetail->brand : null,
+                'device_model' => isset($deviceDetail->model) ? $deviceDetail->model : null,
+                'users' => $users
             ];
         }
         else {
@@ -163,6 +173,17 @@ class Tickets extends BaseApiController
         $ticket = $this->Ticket_model->getTicketDetail($id);
         if (!$ticket) {
             return $this->errorResponse('Ticket not found', 404);
+        }
+
+                $attachments = $this->TicketAttachment_model->getByTicketId($id);
+        if ($attachments) {
+            foreach ($attachments as $att) {
+                $file_path = FCPATH . ltrim($att->file_path, '/');
+                if (file_exists($file_path)) {
+                    @unlink($file_path);
+                }
+            }
+            $this->TicketAttachment_model->deleteByTicketId($id);
         }
 
         $this->Ticket_model->delete($id);
@@ -301,3 +322,6 @@ class Tickets extends BaseApiController
         curl_close($ch);
     }
 }
+
+
+

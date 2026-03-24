@@ -21,4 +21,10 @@ class TicketAttachment_model extends CI_Model
         $this->db->where('ticket_id', $ticket_id);
         return $this->db->get($this->table)->result();
     }
+
+    public function deleteByTicketId($ticket_id)
+    {
+        $this->db->where('ticket_id', $ticket_id);
+        return $this->db->delete($this->table);
+    }
 }
