@@ -1,5 +1,5 @@
 /*
-SQLyog Community v13.1.1 (64 bit)
+SQLyog Professional v13.1.1 (64 bit)
 MySQL - 10.4.27-MariaDB : Database - ticketing-db
 *********************************************************************
 */
@@ -110,7 +110,8 @@ insert  into `device_user_assignments`(`device_id`,`user_id`) values
 (11,14),
 (11,15),
 (13,2),
-(13,3);
+(13,3),
+(14,16);
 
 /*Table structure for table `device_users` */
 
@@ -126,7 +127,7 @@ CREATE TABLE `device_users` (
   PRIMARY KEY (`id`),
   KEY `fk_device_users_unit` (`unit_id`),
   CONSTRAINT `fk_device_users_unit` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `device_users` */
 
@@ -145,7 +146,8 @@ insert  into `device_users`(`id`,`name`,`full_name`,`unit_id`,`phone`,`created_a
 (12,'lukas','Lukas Wijaya',4,'081200000012','2026-03-20 22:35:42'),
 (13,'maya','Maya Sari',5,'081200000013','2026-03-20 22:35:42'),
 (14,'nina','Nina Oktaviani',5,'081200000014','2026-03-20 22:35:42'),
-(15,'oscar','Oscar Gunawan',5,'081200000015','2026-03-20 22:35:42');
+(15,'oscar','Oscar Gunawan',5,'081200000015','2026-03-20 22:35:42'),
+(16,'Eko','Eko Rahmat',2,'08081023123','2026-03-25 01:29:44');
 
 /*Table structure for table `devices` */
 
@@ -184,22 +186,23 @@ CREATE TABLE `devices` (
   CONSTRAINT `fk_devices_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_devices_unit` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`),
   CONSTRAINT `fk_devices_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `devices` */
 
-insert  into `devices`(`id`,`device_name`,`brand`,`model`,`serial_number`,`device_type_id`,`ip_address`,`mac_address`,`remote_address`,`os`,`unit_id`,`coord_x`,`coord_y`,`last_seen`,`created_at`,`created_by`,`updated_by`,`updated_at`) values 
-(3,'PC-RJ-01','Dell','OptiPlex 3080','SN-RJ-PC01',1,'192.168.10.11','AA:BB:CC:DD:01','-','Windows 10',NULL,100,100,NULL,'2026-03-20 22:35:51',NULL,1,'2026-03-20 16:40:18'),
-(4,'PR-RJ-01','HP','LaserJet 1020','SN-RJ-PR01',2,'192.168.10.21','AA:BB:CC:DD:02',NULL,NULL,1,120,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
-(5,'PC-RI-01','Lenovo','ThinkCentre M720','SN-RI-PC01',1,'192.168.20.11','AA:BB:CC:DD:03',NULL,'Windows 10',2,200,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
-(6,'PR-RI-01','Canon','LBP 2900','SN-RI-PR01',2,'192.168.20.21','AA:BB:CC:DD:04',NULL,NULL,2,220,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
-(7,'PC-IGD-01','HP','ProDesk 400','SN-IGD-PC01',1,'192.168.30.11','AA:BB:CC:DD:05',NULL,'Windows 11',3,300,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
-(8,'PR-IGD-01','Epson','L3110','SN-IGD-PR01',2,'192.168.30.21','AA:BB:CC:DD:06',NULL,NULL,3,320,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
-(9,'PC-RAD-01','Dell','Vostro 3681','SN-RAD-PC01',1,'192.168.40.11','AA:BB:CC:DD:07',NULL,'Windows 10',4,400,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
-(10,'PR-RAD-01','Brother','HL-L2321D','SN-RAD-PR01',2,'192.168.40.21','AA:BB:CC:DD:08',NULL,NULL,4,420,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
-(11,'PC-LAB-01','Acer','Veriton X','SN-LAB-PC01',1,'192.168.50.11','AA:BB:CC:DD:09',NULL,'Windows 10',5,500,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
-(12,'PR-LAB-01','HP','DeskJet 2336','SN-LAB-PR01',2,'192.168.50.21','AA:BB:CC:DD:10',NULL,NULL,5,520,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL),
-(13,'TEST-PC-01','Lenovo','Thinkpad','',1,'192.168.20.13','','-','',NULL,NULL,NULL,NULL,'2026-03-20 16:41:18',1,1,'2026-03-20 16:43:03');
+insert  into `devices`(`id`,`device_name`,`brand`,`model`,`serial_number`,`device_type_id`,`ip_address`,`mac_address`,`remote_address`,`os`,`unit_id`,`coord_x`,`coord_y`,`last_seen`,`created_at`,`created_by`,`updated_by`,`updated_at`,`status`,`keterangan`) values 
+(3,'PC-RJ-01','Dell','OptiPlex 3080','SN-RJ-PC01',1,'192.168.10.11','AA:BB:CC:DD:01','-','Windows 10',NULL,100,100,NULL,'2026-03-20 22:35:51',NULL,1,'2026-03-20 16:40:18','Aktif',NULL),
+(4,'PR-RJ-01','HP','LaserJet 1020','SN-RJ-PR01',2,'192.168.10.21','AA:BB:CC:DD:02',NULL,NULL,1,120,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL,'Aktif',NULL),
+(5,'PC-RI-01','Lenovo','ThinkCentre M720','SN-RI-PC01',1,'192.168.20.11','AA:BB:CC:DD:03',NULL,'Windows 10',2,200,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL,'Aktif',NULL),
+(6,'PR-RI-01','Canon','LBP 2900','SN-RI-PR01',2,'192.168.20.21','AA:BB:CC:DD:04',NULL,NULL,2,220,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL,'Aktif',NULL),
+(7,'PC-IGD-01','HP','ProDesk 400','SN-IGD-PC01',1,'192.168.30.11','AA:BB:CC:DD:05',NULL,'Windows 11',3,300,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL,'Aktif',NULL),
+(8,'PR-IGD-01','Epson','L3110','SN-IGD-PR01',2,'192.168.30.21','AA:BB:CC:DD:06',NULL,NULL,3,320,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL,'Aktif',NULL),
+(9,'PC-RAD-01','Dell','Vostro 3681','SN-RAD-PC01',1,'192.168.40.11','AA:BB:CC:DD:07',NULL,'Windows 10',4,400,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL,'Aktif',NULL),
+(10,'PR-RAD-01','Brother','HL-L2321D','SN-RAD-PR01',2,'192.168.40.21','AA:BB:CC:DD:08',NULL,NULL,4,420,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL,'Aktif',NULL),
+(11,'PC-LAB-01','Acer','Veriton X','SN-LAB-PC01',1,'192.168.50.11','AA:BB:CC:DD:09',NULL,'Windows 10',5,500,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL,'Aktif',NULL),
+(12,'PR-LAB-01','HP','DeskJet 2336','SN-LAB-PR01',2,'192.168.50.21','AA:BB:CC:DD:10',NULL,NULL,5,520,100,NULL,'2026-03-20 22:35:51',NULL,NULL,NULL,'Aktif',NULL),
+(13,'TEST-PC-01','Lenovo','Thinkpad','',1,'192.168.20.13','','-','',NULL,NULL,NULL,NULL,'2026-03-20 16:41:18',1,1,'2026-03-20 16:43:03','Aktif',NULL),
+(14,'SIMRS-EKO','Acer','','',1,'::1','','','',2,NULL,NULL,NULL,'2026-03-25 01:41:49',1,NULL,NULL,'Aktif','');
 
 /*Table structure for table `messages` */
 
@@ -215,9 +218,17 @@ CREATE TABLE `messages` (
   PRIMARY KEY (`id`),
   KEY `idx_messages_ticket` (`ticket_id`),
   CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `messages` */
+
+insert  into `messages`(`id`,`ticket_id`,`sender_type`,`sender_id`,`message`,`created_at`) values 
+(3,10,'admin',1,'Ditunggu ya mbak','2026-03-25 01:09:45'),
+(4,12,'admin',1,'ditunggu bro','2026-03-25 01:24:33'),
+(5,12,'device',NULL,'oke aman','2026-03-25 01:24:43'),
+(6,14,'admin',1,'ditunggu mak','2026-03-25 02:01:11'),
+(7,14,'device',NULL,'oke mas','2026-03-25 02:01:17'),
+(8,14,'admin',1,'password 12345','2026-03-25 02:01:31');
 
 /*Table structure for table `subcategories` */
 
@@ -231,7 +242,7 @@ CREATE TABLE `subcategories` (
   PRIMARY KEY (`id`),
   KEY `category_id` (`category_id`),
   CONSTRAINT `subcategories_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `subcategories` */
 
@@ -257,7 +268,8 @@ insert  into `subcategories`(`id`,`category_id`,`name`,`sla_minutes`) values
 (19,5,'Kertas sering macet',45),
 (20,6,'Scanner tidak terdeteksi',60),
 (21,6,'Scanner tidak bisa scan',60),
-(22,6,'Hasil scan tidak muncul',60);
+(22,6,'Hasil scan tidak muncul',60),
+(23,3,'INACBGs Tidak Bisa Diakses',NULL);
 
 /*Table structure for table `ticket_attachments` */
 
@@ -272,9 +284,12 @@ CREATE TABLE `ticket_attachments` (
   PRIMARY KEY (`id`),
   KEY `ticket_id` (`ticket_id`),
   CONSTRAINT `ticket_attachments_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `ticket_attachments` */
+
+insert  into `ticket_attachments`(`id`,`ticket_id`,`file_name`,`file_path`,`uploaded_at`) values 
+(1,16,'ticket_16_1774406992.png','/uploads/tickets/ticket_16_1774406992.png','2026-03-25 10:49:52');
 
 /*Table structure for table `tickets` */
 
@@ -315,9 +330,19 @@ CREATE TABLE `tickets` (
   CONSTRAINT `fk_ticket_subcategory` FOREIGN KEY (`subcategory_id`) REFERENCES `subcategories` (`id`),
   CONSTRAINT `tickets_ibfk_1` FOREIGN KEY (`device_id`) REFERENCES `devices` (`id`) ON DELETE CASCADE,
   CONSTRAINT `tickets_ibfk_2` FOREIGN KEY (`handled_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `tickets` */
+
+insert  into `tickets`(`id`,`device_id`,`reporter_name`,`reporter_unit`,`reporter_contact`,`report_hostname`,`report_ip`,`report_device_brand`,`report_device_model`,`report_user_agent`,`title`,`description`,`action_taken`,`handling_notes`,`status`,`priority`,`sla_response_minutes`,`first_response_at`,`handled_by`,`created_at`,`updated_at`,`resolved_at`,`category_id`,`subcategory_id`) values 
+(9,NULL,'Andi Saputra','Rawat Jalan','','SIMRS-EKO','::1','','','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36','SIMRS - SIMRS tidak bisa login','','Restart printer',NULL,'process','medium',NULL,'2026-03-25 01:21:11',NULL,'2026-03-25 08:07:56','2026-03-25 01:21:11',NULL,3,9),
+(10,NULL,'Andi Saputra','IGD','','SIMRS-EKO','::1','','','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36','Printer - Printer tidak bisa mencetak','',NULL,NULL,'done','medium',NULL,'2026-03-25 01:09:57',1,'2026-03-25 08:09:12','2026-03-25 01:10:26',NULL,5,16),
+(11,NULL,'Gina Maharani','Rawat Jalan','','SIMRS-EKO','::1','','','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36','SIMRS - SIMRS tidak bisa mencetak','',NULL,NULL,'open','medium',NULL,NULL,NULL,'2026-03-25 08:22:58',NULL,NULL,3,11),
+(12,NULL,'Andi Saputra','Rawat Inap','','SIMRS-EKO','::1','','','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36','SIMRS - SIMRS tidak bisa login','',NULL,NULL,'open','medium',NULL,NULL,NULL,'2026-03-25 08:24:13',NULL,NULL,3,9),
+(13,NULL,'Andi Saputra','Rawat Inap','','SIMRS-EKO','::1','','','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36','Komputer - Keyboard atau mouse tidak berfungsi','',NULL,NULL,'done','medium',NULL,'2026-03-25 01:25:49',NULL,'2026-03-25 08:25:29','2026-03-25 01:25:53',NULL,1,4),
+(14,14,'Eko','Rawat Inap','','SIMRS-EKO','::1','Acer','','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36','SIMRS - SIMRS tidak bisa login','',NULL,NULL,'done','medium',NULL,'2026-03-25 02:01:56',NULL,'2026-03-25 09:00:51','2026-03-25 03:38:23',NULL,3,9),
+(15,14,'Eko','Rawat Inap','','SIMRS-EKO','::1','Acer','','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36','Display - Monitor tidak menyala','',NULL,NULL,'open','medium',NULL,NULL,NULL,'2026-03-25 10:49:33',NULL,NULL,4,13),
+(16,14,'Eko','Rawat Inap','','SIMRS-EKO','::1','Acer','','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36','Printer - Hasil cetakan tidak jelas','',NULL,NULL,'open','medium',NULL,NULL,NULL,'2026-03-25 10:49:52',NULL,NULL,5,18);
 
 /*Table structure for table `units` */
 
@@ -360,7 +385,7 @@ CREATE TABLE `users` (
 /*Data for the table `users` */
 
 insert  into `users`(`id`,`name`,`username`,`password`,`role`,`last_login`,`created_at`,`updated_at`) values 
-(1,'Eko Rahmat','Eko','$2y$10$F6aqWguvk8xKQ5u7a29QLetDjxleYbl8sBMJVOv.Ro6TsF8e/TjRa','superadmin','2026-03-20 15:43:02','2026-03-10 05:22:50','2026-03-19 15:29:47'),
+(1,'Eko Rahmat','Eko','$2y$10$F6aqWguvk8xKQ5u7a29QLetDjxleYbl8sBMJVOv.Ro6TsF8e/TjRa','superadmin','2026-03-25 01:08:18','2026-03-10 05:22:50','2026-03-19 15:29:47'),
 (4,'Adrian Ronaldy','Ronal','$2y$10$jGIC6eduWvV6mqtDYJfBne6gpFEz3klu0czpR6jkrqg8FF55AIANG','admin','2026-03-19 15:28:39','2026-03-19 15:27:38',NULL);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
