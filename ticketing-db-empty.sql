@@ -50,6 +50,9 @@ CREATE TABLE `users` (
 
 /*Data for the table `users` */
 
+insert  into `users`(`id`,`name`,`username`,`password`,`role`,`last_login`,`created_at`,`updated_at`) values 
+(1,'Eko Rahmat','Eko','$2y$10$F6aqWguvk8xKQ5u7a29QLetDjxleYbl8sBMJVOv.Ro6TsF8e/TjRa','superadmin','2026-03-25 01:08:18','2026-03-10 05:22:50','2026-03-19 15:29:47'),
+(4,'Adrian Ronaldy','Ronal','$2y$10$jGIC6eduWvV6mqtDYJfBne6gpFEz3klu0czpR6jkrqg8FF55AIANG','admin','2026-03-19 15:28:39','2026-03-19 15:27:38',NULL);
 
 /*Table structure for table `categories` */
 
@@ -63,6 +66,13 @@ CREATE TABLE `categories` (
 
 /*Data for the table `categories` */
 
+insert  into `categories`(`id`,`name`) values 
+(1,'Komputer'),
+(2,'Jaringan'),
+(3,'SIMRS'),
+(4,'Display'),
+(5,'Printer'),
+(6,'Scanner');
 
 /*Table structure for table `device_types` */
 
@@ -76,6 +86,11 @@ CREATE TABLE `device_types` (
 
 /*Data for the table `device_types` */
 
+insert  into `device_types`(`id`,`name`) values 
+(1,'Computer'),
+(2,'Printer'),
+(3,'Access Point'),
+(4,'CCTV');
 
 /*Table structure for table `device_users` */
 
@@ -154,6 +169,30 @@ CREATE TABLE `subcategories` (
 
 /*Data for the table `subcategories` */
 
+insert  into `subcategories`(`id`,`category_id`,`name`,`sla_minutes`) values 
+(1,1,'Komputer tidak menyala',60),
+(2,1,'Komputer sangat lambat',60),
+(3,1,'Blue screen / error sistem',60),
+(4,1,'Keyboard atau mouse tidak berfungsi',60),
+(5,2,'Tidak bisa terhubung ke jaringan',30),
+(6,2,'Internet sangat lambat',30),
+(7,2,'Wifi sering terputus',30),
+(8,2,'Tidak bisa akses server',30),
+(9,3,'SIMRS tidak bisa login',15),
+(10,3,'SIMRS error saat input data',15),
+(11,3,'SIMRS tidak bisa mencetak',15),
+(12,3,'SIMRS sangat lambat',15),
+(13,4,'Monitor tidak menyala',60),
+(14,4,'Tampilan layar tidak normal',60),
+(15,4,'Resolusi layar bermasalah',60),
+(16,5,'Printer tidak bisa mencetak',45),
+(17,5,'Printer offline',45),
+(18,5,'Hasil cetakan tidak jelas',45),
+(19,5,'Kertas sering macet',45),
+(20,6,'Scanner tidak terdeteksi',60),
+(21,6,'Scanner tidak bisa scan',60),
+(22,6,'Hasil scan tidak muncul',60),
+(23,3,'INACBGs Tidak Bisa Diakses',NULL);
 
 /*Table structure for table `tickets` */
 
