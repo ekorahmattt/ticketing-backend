@@ -170,6 +170,8 @@ CREATE TABLE `devices` (
   `created_by` int(11) DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
+  `status` varchar(50) DEFAULT 'Aktif',
+  `keterangan` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_device_ip` (`ip_address`),
   KEY `idx_device_mac` (`mac_address`),

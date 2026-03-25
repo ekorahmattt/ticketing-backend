@@ -214,10 +214,9 @@ class Tickets extends BaseApiController
         }
 
         $updateData = [];
-        // Daftar field yang diperbolehkan untuk diupdate
         $editable_fields = [
             'device_id', 'reporter_name', 'reporter_unit', 'reporter_contact',
-            'category_id', 'subcategory_id', 'title', 'description', 'handled_by'
+            'category_id', 'subcategory_id', 'title', 'description', 'handled_by', 'action_taken'
         ];
 
         foreach ($editable_fields as $field) {
