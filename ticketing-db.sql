@@ -16,6 +16,50 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`ticketing-db` /*!40100 DEFAULT CHARACTE
 
 USE `ticketing-db`;
 
+/*Table structure for table `units` */
+
+DROP TABLE IF EXISTS `units`;
+
+CREATE TABLE `units` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `code` varchar(20) DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `units` */
+
+insert  into `units`(`id`,`name`,`code`,`created_at`) values 
+(1,'Rawat Jalan','RJ','2026-03-20 23:51:16'),
+(2,'Rawat Inap','RI','2026-03-20 23:51:16'),
+(3,'IGD','IGD','2026-03-20 23:51:16'),
+(4,'Radiologi','RAD','2026-03-20 23:51:16'),
+(5,'Laboratorium','LAB','2026-03-20 23:51:16');
+
+/*Table structure for table `users` */
+
+DROP TABLE IF EXISTS `users`;
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('admin','superadmin') DEFAULT 'admin',
+  `last_login` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `users` */
+
+insert  into `users`(`id`,`name`,`username`,`password`,`role`,`last_login`,`created_at`,`updated_at`) values 
+(1,'Eko Rahmat','Eko','$2y$10$F6aqWguvk8xKQ5u7a29QLetDjxleYbl8sBMJVOv.Ro6TsF8e/TjRa','superadmin','2026-03-25 01:08:18','2026-03-10 05:22:50','2026-03-19 15:29:47'),
+(4,'Adrian Ronaldy','Ronal','$2y$10$jGIC6eduWvV6mqtDYJfBne6gpFEz3klu0czpR6jkrqg8FF55AIANG','admin','2026-03-19 15:28:39','2026-03-19 15:27:38',NULL);
+
 /*Table structure for table `categories` */
 
 DROP TABLE IF EXISTS `categories`;
@@ -36,30 +80,6 @@ insert  into `categories`(`id`,`name`) values
 (5,'Printer'),
 (6,'Scanner');
 
-/*Table structure for table `device_connections` */
-
-DROP TABLE IF EXISTS `device_connections`;
-
-CREATE TABLE `device_connections` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `parent_device_id` int(11) NOT NULL,
-  `child_device_id` int(11) NOT NULL,
-  `connection_type` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `parent_device_id` (`parent_device_id`),
-  KEY `child_device_id` (`child_device_id`),
-  CONSTRAINT `device_connections_ibfk_1` FOREIGN KEY (`parent_device_id`) REFERENCES `devices` (`id`),
-  CONSTRAINT `device_connections_ibfk_2` FOREIGN KEY (`child_device_id`) REFERENCES `devices` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-/*Data for the table `device_connections` */
-
-insert  into `device_connections`(`id`,`parent_device_id`,`child_device_id`,`connection_type`) values 
-(2,5,6,'USB'),
-(3,7,8,'USB'),
-(4,9,10,'USB'),
-(5,11,12,'USB');
-
 /*Table structure for table `device_types` */
 
 DROP TABLE IF EXISTS `device_types`;
@@ -77,41 +97,6 @@ insert  into `device_types`(`id`,`name`) values
 (2,'Printer'),
 (3,'Access Point'),
 (4,'CCTV');
-
-/*Table structure for table `device_user_assignments` */
-
-DROP TABLE IF EXISTS `device_user_assignments`;
-
-CREATE TABLE `device_user_assignments` (
-  `device_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`device_id`,`user_id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `device_user_assignments_ibfk_1` FOREIGN KEY (`device_id`) REFERENCES `devices` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `device_user_assignments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `device_users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-/*Data for the table `device_user_assignments` */
-
-insert  into `device_user_assignments`(`device_id`,`user_id`) values 
-(3,1),
-(3,2),
-(3,3),
-(5,4),
-(5,5),
-(5,6),
-(7,7),
-(7,8),
-(7,9),
-(9,10),
-(9,11),
-(9,12),
-(11,13),
-(11,14),
-(11,15),
-(13,2),
-(13,3),
-(14,16);
 
 /*Table structure for table `device_users` */
 
@@ -204,32 +189,6 @@ insert  into `devices`(`id`,`device_name`,`brand`,`model`,`serial_number`,`devic
 (13,'TEST-PC-01','Lenovo','Thinkpad','',1,'192.168.20.13','','-','',NULL,NULL,NULL,NULL,'2026-03-20 16:41:18',1,1,'2026-03-20 16:43:03','Aktif',NULL),
 (14,'SIMRS-EKO','Acer','','',1,'::1','','','',2,NULL,NULL,NULL,'2026-03-25 01:41:49',1,NULL,NULL,'Aktif','');
 
-/*Table structure for table `messages` */
-
-DROP TABLE IF EXISTS `messages`;
-
-CREATE TABLE `messages` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ticket_id` int(11) NOT NULL,
-  `sender_type` enum('admin','device') NOT NULL,
-  `sender_id` int(11) DEFAULT NULL,
-  `message` text NOT NULL,
-  `created_at` datetime DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  KEY `idx_messages_ticket` (`ticket_id`),
-  CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-/*Data for the table `messages` */
-
-insert  into `messages`(`id`,`ticket_id`,`sender_type`,`sender_id`,`message`,`created_at`) values 
-(3,10,'admin',1,'Ditunggu ya mbak','2026-03-25 01:09:45'),
-(4,12,'admin',1,'ditunggu bro','2026-03-25 01:24:33'),
-(5,12,'device',NULL,'oke aman','2026-03-25 01:24:43'),
-(6,14,'admin',1,'ditunggu mak','2026-03-25 02:01:11'),
-(7,14,'device',NULL,'oke mas','2026-03-25 02:01:17'),
-(8,14,'admin',1,'password 12345','2026-03-25 02:01:31');
-
 /*Table structure for table `subcategories` */
 
 DROP TABLE IF EXISTS `subcategories`;
@@ -270,26 +229,6 @@ insert  into `subcategories`(`id`,`category_id`,`name`,`sla_minutes`) values
 (21,6,'Scanner tidak bisa scan',60),
 (22,6,'Hasil scan tidak muncul',60),
 (23,3,'INACBGs Tidak Bisa Diakses',NULL);
-
-/*Table structure for table `ticket_attachments` */
-
-DROP TABLE IF EXISTS `ticket_attachments`;
-
-CREATE TABLE `ticket_attachments` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ticket_id` int(11) NOT NULL,
-  `file_name` varchar(255) DEFAULT NULL,
-  `file_path` varchar(255) DEFAULT NULL,
-  `uploaded_at` datetime DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  KEY `ticket_id` (`ticket_id`),
-  CONSTRAINT `ticket_attachments_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-/*Data for the table `ticket_attachments` */
-
-insert  into `ticket_attachments`(`id`,`ticket_id`,`file_name`,`file_path`,`uploaded_at`) values 
-(1,16,'ticket_16_1774406992.png','/uploads/tickets/ticket_16_1774406992.png','2026-03-25 10:49:52');
 
 /*Table structure for table `tickets` */
 
@@ -344,49 +283,110 @@ insert  into `tickets`(`id`,`device_id`,`reporter_name`,`reporter_unit`,`reporte
 (15,14,'Eko','Rawat Inap','','SIMRS-EKO','::1','Acer','','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36','Display - Monitor tidak menyala','',NULL,NULL,'open','medium',NULL,NULL,NULL,'2026-03-25 10:49:33',NULL,NULL,4,13),
 (16,14,'Eko','Rawat Inap','','SIMRS-EKO','::1','Acer','','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36','Printer - Hasil cetakan tidak jelas','',NULL,NULL,'open','medium',NULL,NULL,NULL,'2026-03-25 10:49:52',NULL,NULL,5,18);
 
-/*Table structure for table `units` */
+/*Table structure for table `device_connections` */
 
-DROP TABLE IF EXISTS `units`;
+DROP TABLE IF EXISTS `device_connections`;
 
-CREATE TABLE `units` (
+CREATE TABLE `device_connections` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `code` varchar(20) DEFAULT NULL,
-  `created_at` datetime DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-/*Data for the table `units` */
-
-insert  into `units`(`id`,`name`,`code`,`created_at`) values 
-(1,'Rawat Jalan','RJ','2026-03-20 23:51:16'),
-(2,'Rawat Inap','RI','2026-03-20 23:51:16'),
-(3,'IGD','IGD','2026-03-20 23:51:16'),
-(4,'Radiologi','RAD','2026-03-20 23:51:16'),
-(5,'Laboratorium','LAB','2026-03-20 23:51:16');
-
-/*Table structure for table `users` */
-
-DROP TABLE IF EXISTS `users`;
-
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` enum('admin','superadmin') DEFAULT 'admin',
-  `last_login` datetime DEFAULT NULL,
-  `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT NULL,
+  `parent_device_id` int(11) NOT NULL,
+  `child_device_id` int(11) NOT NULL,
+  `connection_type` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `parent_device_id` (`parent_device_id`),
+  KEY `child_device_id` (`child_device_id`),
+  CONSTRAINT `device_connections_ibfk_1` FOREIGN KEY (`parent_device_id`) REFERENCES `devices` (`id`),
+  CONSTRAINT `device_connections_ibfk_2` FOREIGN KEY (`child_device_id`) REFERENCES `devices` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-/*Data for the table `users` */
+/*Data for the table `device_connections` */
 
-insert  into `users`(`id`,`name`,`username`,`password`,`role`,`last_login`,`created_at`,`updated_at`) values 
-(1,'Eko Rahmat','Eko','$2y$10$F6aqWguvk8xKQ5u7a29QLetDjxleYbl8sBMJVOv.Ro6TsF8e/TjRa','superadmin','2026-03-25 01:08:18','2026-03-10 05:22:50','2026-03-19 15:29:47'),
-(4,'Adrian Ronaldy','Ronal','$2y$10$jGIC6eduWvV6mqtDYJfBne6gpFEz3klu0czpR6jkrqg8FF55AIANG','admin','2026-03-19 15:28:39','2026-03-19 15:27:38',NULL);
+insert  into `device_connections`(`id`,`parent_device_id`,`child_device_id`,`connection_type`) values 
+(2,5,6,'USB'),
+(3,7,8,'USB'),
+(4,9,10,'USB'),
+(5,11,12,'USB');
+
+/*Table structure for table `device_user_assignments` */
+
+DROP TABLE IF EXISTS `device_user_assignments`;
+
+CREATE TABLE `device_user_assignments` (
+  `device_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`device_id`,`user_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `device_user_assignments_ibfk_1` FOREIGN KEY (`device_id`) REFERENCES `devices` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `device_user_assignments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `device_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `device_user_assignments` */
+
+insert  into `device_user_assignments`(`device_id`,`user_id`) values 
+(3,1),
+(3,2),
+(3,3),
+(5,4),
+(5,5),
+(5,6),
+(7,7),
+(7,8),
+(7,9),
+(9,10),
+(9,11),
+(9,12),
+(11,13),
+(11,14),
+(11,15),
+(13,2),
+(13,3),
+(14,16);
+
+/*Table structure for table `messages` */
+
+DROP TABLE IF EXISTS `messages`;
+
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ticket_id` int(11) NOT NULL,
+  `sender_type` enum('admin','device') NOT NULL,
+  `sender_id` int(11) DEFAULT NULL,
+  `message` text NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_messages_ticket` (`ticket_id`),
+  CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `messages` */
+
+insert  into `messages`(`id`,`ticket_id`,`sender_type`,`sender_id`,`message`,`created_at`) values 
+(3,10,'admin',1,'Ditunggu ya mbak','2026-03-25 01:09:45'),
+(4,12,'admin',1,'ditunggu bro','2026-03-25 01:24:33'),
+(5,12,'device',NULL,'oke aman','2026-03-25 01:24:43'),
+(6,14,'admin',1,'ditunggu mak','2026-03-25 02:01:11'),
+(7,14,'device',NULL,'oke mas','2026-03-25 02:01:17'),
+(8,14,'admin',1,'password 12345','2026-03-25 02:01:31');
+
+/*Table structure for table `ticket_attachments` */
+
+DROP TABLE IF EXISTS `ticket_attachments`;
+
+CREATE TABLE `ticket_attachments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ticket_id` int(11) NOT NULL,
+  `file_name` varchar(255) DEFAULT NULL,
+  `file_path` varchar(255) DEFAULT NULL,
+  `uploaded_at` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `ticket_id` (`ticket_id`),
+  CONSTRAINT `ticket_attachments_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `ticket_attachments` */
+
+insert  into `ticket_attachments`(`id`,`ticket_id`,`file_name`,`file_path`,`uploaded_at`) values 
+(1,16,'ticket_16_1774406992.png','/uploads/tickets/ticket_16_1774406992.png','2026-03-25 10:49:52');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
