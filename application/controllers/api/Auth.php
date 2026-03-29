@@ -53,12 +53,13 @@ class Auth extends BaseApiController
 
     public function logout()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            return $this->errorResponse('Method Not Allowed', 405);
+        // Respond to any method in case of beacon or navigation (best practice)
+        // Check if session is started then destroy it
+        if (session_id()) {
+            session_destroy();
         }
 
-        // Dalam MVP ini, hanya return response success (Token penghapusan dibebankan pada Frontend jika pakai localSotrage dsb.)
-        // Jika nantinya menggunakan session/token database, bisa dicabutt/dihapus di sini
+        // Return a successful response
         return $this->successResponse((object)[], 'logout successful');
     }
 
