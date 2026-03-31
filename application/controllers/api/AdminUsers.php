@@ -11,16 +11,22 @@ class AdminUsers extends BaseApiController
         parent::__construct();
         $this->load->model('User_model');
 
-        // Pengecekan role agar HANYA superadmin yang boleh mengakses fitur admin users
-        // Untuk testing API via Postman, tambahkan header: X-User-Role: superadmin
         $role = $this->input->get_request_header('X-User-Role', TRUE);
+        $method = $this->input->server('REQUEST_METHOD');
 
-        if (strtolower((string)$role) !== 'superadmin') {
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'access denied'
-            ]);
-            exit;
+        // Allow both admin and superadmin to view admin list (GET)
+        if ($method === 'GET') {
+            if (empty($role) || !in_array(strtolower((string)$role), ['admin', 'superadmin'])) {
+                echo json_encode(['status' => 'error', 'message' => 'access denied']);
+                exit;
+            }
+        } 
+        // Other methods (POST, PUT, DELETE) still require 'superadmin'
+        else {
+            if (empty($role) || strtolower((string)$role) !== 'superadmin') {
+                echo json_encode(['status' => 'error', 'message' => 'access denied']);
+                exit;
+            }
         }
     }
 

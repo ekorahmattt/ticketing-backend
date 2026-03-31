@@ -296,6 +296,26 @@ class Tickets extends BaseApiController
         return $this->successResponse(null, 'Status ticket berhasil diupdate');
     }
 
+    public function export()
+    {
+        $role = $this->input->get_request_header('X-User-Role', TRUE);
+        if (empty($role) || !in_array(strtolower((string)$role), ['admin', 'superadmin'])) {
+            return $this->errorResponse('Access denied', 403);
+        }
+
+        $filters = [
+            'start_date' => $this->input->get('start_date'),
+            'end_date' => $this->input->get('end_date'),
+            'unit' => $this->input->get('unit'),
+            'category' => $this->input->get('category'),
+            'status' => $this->input->get('status'),
+            'search' => $this->input->get('search')
+        ];
+
+        $tickets = $this->Ticket_model->getFilteredTickets($filters);
+        return $this->successResponse($tickets, 'Data export berhasil dimuat');
+    }
+
     private function triggerWebSocket($eventName, $data = null)
     {
         $url = 'http://localhost:3001/api/webhook/ticket';
