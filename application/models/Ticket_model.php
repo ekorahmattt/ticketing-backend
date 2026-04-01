@@ -44,8 +44,9 @@ class Ticket_model extends CI_Model
 
     public function getAllTickets()
     {
-        $this->db->select('tickets.id, tickets.reporter_name, tickets.reporter_unit, categories.name as category, subcategories.name as subcategory, tickets.title, tickets.status, tickets.created_at, users.name as teknisi');
+        $this->db->select('tickets.id, tickets.reporter_name, tickets.reporter_unit, categories.name as category, subcategories.name as subcategory, tickets.title, tickets.status, tickets.created_at, users.name as teknisi, devices.coord_x, devices.coord_y');
         $this->db->from($this->table);
+        $this->db->join('devices', 'devices.id = tickets.device_id', 'left');
         $this->db->join('categories', 'categories.id = tickets.category_id', 'left');
         $this->db->join('subcategories', 'subcategories.id = tickets.subcategory_id', 'left');
         $this->db->join('users', 'users.id = tickets.handled_by', 'left');
@@ -55,8 +56,9 @@ class Ticket_model extends CI_Model
 
     public function getTicketsByDeviceId($device_id)
     {
-        $this->db->select('tickets.id, tickets.reporter_name, tickets.reporter_unit, categories.name as category, subcategories.name as subcategory, tickets.title, tickets.status, tickets.created_at, users.name as teknisi');
+        $this->db->select('tickets.id, tickets.reporter_name, tickets.reporter_unit, categories.name as category, subcategories.name as subcategory, tickets.title, tickets.status, tickets.created_at, users.name as teknisi, devices.coord_x, devices.coord_y');
         $this->db->from($this->table);
+        $this->db->join('devices', 'devices.id = tickets.device_id', 'left');
         $this->db->join('categories', 'categories.id = tickets.category_id', 'left');
         $this->db->join('subcategories', 'subcategories.id = tickets.subcategory_id', 'left');
         $this->db->join('users', 'users.id = tickets.handled_by', 'left');
