@@ -17,6 +17,9 @@ class DeviceUserAssignment_model extends CI_Model
         $this->db->from($this->table);
         $this->db->join('device_users', 'device_users.id = ' . $this->table . '.user_id', 'left');
         $this->db->where($this->table . '.device_id', $device_id);
+        // Urutkan deterministik agar prioritas user untuk sebuah device konsisten.
+        // Karena tabel assign tidak punya kolom urutan (mis: assignment id), gunakan user_id.
+        $this->db->order_by($this->table . '.user_id', 'ASC');
         return $this->db->get()->result();
     }
 

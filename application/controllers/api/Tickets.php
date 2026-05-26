@@ -108,9 +108,28 @@ class Tickets extends BaseApiController
         }
 
         $ip_address = $this->input->ip_address();
-        $device = $this->Device_model->getByIp($ip_address);
+        // hostname untuk IP remote client. gethostbyaddr bisa null/igual IP kalau tidak bisa resolving.
+        $hostname = @gethostbyaddr($ip_address);
+        if ($hostname === false || $hostname === $ip_address) {
+            $hostname = null;
+        }
 
-        $response = ['status' => 'success'];
+        // Selalu kembalikan ip/hostname hasil request, meski device belum terdaftar.
+        $response = [
+            'status' => 'success',
+            'device_detected' => false,
+            'data' => [
+                'device_id' => null,
+                'device_name' => null,
+                'hostname' => $hostname,
+                'unit' => null,
+                'ip_address' => $ip_address,
+                'device_brand' => null,
+                'device_model' => null,
+                'users' => []
+            ]
+        ];
+        $device = $this->Device_model->getByIp($ip_address);
         if ($device) {
             $this->load->model('DeviceUserAssignment_model');
             $deviceDetail = $this->Device_model->getById($device->id);
@@ -127,9 +146,6 @@ class Tickets extends BaseApiController
                 'device_model' => isset($deviceDetail->model) ? $deviceDetail->model : null,
                 'users' => $users
             ];
-        }
-        else {
-            $response['device_detected'] = false;
         }
 
         return $this->output
